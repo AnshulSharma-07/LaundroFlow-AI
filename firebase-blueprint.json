@@ -1,0 +1,53 @@
+{
+  "entities": {
+    "Order": {
+      "title": "Order",
+      "description": "A laundry service order",
+      "type": "object",
+      "properties": {
+        "customerName": { "type": "string", "description": "Name of the customer" },
+        "customerPhone": { "type": "string", "description": "Phone number of the customer" },
+        "garments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": { "type": "string" },
+              "quantity": { "type": "integer" },
+              "pricePerUnit": { "type": "number" }
+            }
+          }
+        },
+        "totalAmount": { "type": "number" },
+        "status": {
+          "type": "string",
+          "enum": ["RECEIVED", "PROCESSING", "READY", "DELIVERED"]
+        },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "estimatedDeliveryDate": { "type": "string", "format": "date-time" }
+      },
+      "required": ["customerName", "customerPhone", "garments", "totalAmount", "status", "createdAt", "updatedAt"]
+    },
+    "GarmentType": {
+      "title": "Garment Type",
+      "description": "Definition of a garment type and its price",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "basePrice": { "type": "number" }
+      },
+      "required": ["name", "basePrice"]
+    }
+  },
+  "firestore": {
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Collection of laundry orders"
+    },
+    "/garmentTypes/{typeId}": {
+      "schema": "GarmentType",
+      "description": "Configuration for garment types and pricing"
+    }
+  }
+}

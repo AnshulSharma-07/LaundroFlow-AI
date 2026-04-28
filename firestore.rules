@@ -1,0 +1,68 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Helpers ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // --- Order Validation ---
+    function isValidOrder(data) {
+      return data.customerName is string && data.customerName.size() > 0 && data.customerName.size() <= 100
+        && data.customerPhone is string && data.customerPhone.size() >= 10 && data.customerPhone.size() <= 15
+        && data.garments is list
+        && data.garments.size() > 0
+        && data.totalAmount is number
+        && data.status in ['RECEIVED', 'PROCESSING', 'READY', 'DELIVERED']
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    // --- Rules for Orders ---
+    match /orders/{orderId} {
+      allow list: if isSignedIn(); // In a real app, I'd filter but for this mini system, clerk access is fine
+      allow get: if isSignedIn();
+      
+      allow create: if isSignedIn() 
+        && isValidId(orderId)
+        && isValidOrder(incoming())
+        && incoming().createdAt == request.time;
+      
+      allow update: if isSignedIn()
+        && isValidOrder(incoming())
+        && incoming().updatedAt == request.time
+        && incoming().createdAt == existing().createdAt
+        && (
+          // Action: Status Update
+          (incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt'])) ||
+          // Action: Full Edit
+          (incoming().diff(existing()).affectedKeys().hasOnly(['customerName', 'customerPhone', 'garments', 'totalAmount', 'status', 'updatedAt', 'estimatedDeliveryDate']))
+        );
+
+      allow delete: if isSignedIn();
+    }
+
+    // --- Rules for Garment Types ---
+    match /garmentTypes/{typeId} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn(); // Basic admin check would go here if we had admins
+    }
+  }
+}
