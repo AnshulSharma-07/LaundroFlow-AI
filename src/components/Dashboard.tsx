@@ -79,16 +79,6 @@ export default function Dashboard({ orders }: DashboardProps) {
               Generate Detailed Report
             </button>
           </div>
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-            <h4 className="text-sm font-bold text-slate-900 mb-4 uppercase tracking-wider">Storage Capacity</h4>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-slate-500">Rack Space Used</span>
-              <span className="text-xs font-bold text-slate-900">68%</span>
-            </div>
-            <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-               <div className="h-full bg-slate-900 w-[68%]"></div>
-            </div>
-          </div>
         </div>
       </div>
     </div>

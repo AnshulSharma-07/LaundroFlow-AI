@@ -26,7 +26,7 @@ service cloud.firestore {
     // --- Order Validation ---
     function isValidOrder(data) {
       return data.customerName is string && data.customerName.size() > 0 && data.customerName.size() <= 100
-        && data.customerPhone is string && data.customerPhone.size() >= 10 && data.customerPhone.size() <= 15
+        && data.customerPhone is string && data.customerPhone.size() >= 7 && data.customerPhone.size() <= 30
         && data.garments is list
         && data.garments.size() > 0
         && data.totalAmount is number
@@ -37,13 +37,14 @@ service cloud.firestore {
 
     // --- Rules for Orders ---
     match /orders/{orderId} {
-      allow list: if isSignedIn(); // In a real app, I'd filter but for this mini system, clerk access is fine
+      allow list: if isSignedIn(); 
       allow get: if isSignedIn();
       
       allow create: if isSignedIn() 
         && isValidId(orderId)
         && isValidOrder(incoming())
-        && incoming().createdAt == request.time;
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
       
       allow update: if isSignedIn()
         && isValidOrder(incoming())

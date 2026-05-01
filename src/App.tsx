@@ -84,7 +84,7 @@ export default function App() {
             <Waves className="text-white w-10 h-10" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 mb-2">Welcome to LaundroStack</h1>
+            <h1 className="text-2xl font-bold text-slate-900 mb-2">Welcome to Online Laundry</h1>
             <p className="text-slate-500 text-sm">Sign in to manage your laundry operations with AI precision.</p>
           </div>
           <button 
@@ -117,7 +117,7 @@ export default function App() {
               animate={{ opacity: 1 }}
               className="font-sans font-bold text-xl tracking-tight text-slate-900"
             >
-              LaundroStack <span className="text-indigo-600">AI</span>
+              Online Laundry
             </motion.span>
           )}
         </div>
